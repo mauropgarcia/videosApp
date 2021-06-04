@@ -1,3 +1,5 @@
+import { IFilmeApi, IListaFilmes } from './../models/iFilmeAPI.models';
+import { FilmeService } from './../services/filme.service';
 import { DadosService } from './../services/dados.service';
 import { Component } from '@angular/core';
 import { AlertController } from '@ionic/angular';
@@ -11,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  titulo = 'Videos APP';
+  titulo = 'FILMES';
   listaVideos: IFilme[] = [
     {
       nome: 'Mortal Kombat (2021)',
@@ -77,13 +79,27 @@ export class Tab1Page {
       pagina: ''
     }
   ];
+  listaFilmes: IListaFilmes;
+
   constructor(public alertController: AlertController,
     public toastController: ToastController,
     public dadosService: DadosService,
+    public filmeService: FilmeService,
     public route: Router
   ) { }
 
-  exibirFilme(filme: IFilme) {
+  buscarFilmes(evento: any){
+    console.log(evento.target.value);
+    const busca = evento.target.value;
+    if(busca && busca.trim() !== '') {
+       this.filmeService.buscarFilmes(busca).subscribe(dados=>{
+          console.log(dados);
+          this.listaFilmes = dados;
+       });
+    }
+  }
+
+  exibirFilme(filme: IFilmeApi) {
     this.dadosService.guardarDados('filme', filme);
     this.route.navigateByUrl('/dados-filme');
   }
